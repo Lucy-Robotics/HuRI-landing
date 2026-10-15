@@ -8,7 +8,7 @@ epic ([huri-core#93](https://github.com/Lucy-Robotics/huri-core/issues/93)).
 | Repository | Holds | Depends on |
 |---|---|---|
 | [huri-core](https://github.com/Lucy-Robotics/huri-core) | the abstract framework: base classes, bus, server, plugin loader, checks, client SDK, `huri_core.testing`, and the `huri` command, which only dispatches to installed command plugins | nothing of HuRI's |
-| [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | `packages/huri-events`, the curated `packages/huri-module-*` (+ `huri-tts`), `registry.toml` with its checker and `packages/huri-hub` (`huri hub`), `modules/<name>` submodules for verified third-party modules, install and deploy, the reference client in `examples/cli` | `huri-core`, at the ref in its `HURI_CORE_REF` file |
+| [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | `packages/huri-events`, the curated `packages/huri-module-*`, `registry.toml` with its checker and `packages/huri-hub` (`huri hub`), `modules/<name>` submodules for verified third-party modules, install and deploy, the reference client in `examples/cli` | `huri-core`, at the ref in its `HURI_CORE_REF` file |
 | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | a starter module package, with its tests and CI | `huri-core` + `huri-events` |
 | [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | these pages | nothing |
 
@@ -159,8 +159,11 @@ curated pipeline together (`tests/integration`).
 ## Installing
 
 Each module package declares its dependencies, and exact pins per hardware
-variant in `requirements-{cpu,nvidia,amd}.txt`. The `huri-modules` installer
-merges them for the planned modules and stops on conflicting pins before
+variant in `requirements-{cpu,nvidia,amd}.txt`. A package providing several
+modules keeps each one's heavy dependencies apart: an extra per module
+(`huri-module-tts[piper]`, `huri-module-tts[cosyvoice]`) and pins in
+`requirements-<variant>.<module>.txt`, applied only when that module is
+planned. The `huri-modules` installer merges them for the planned modules and stops on conflicting pins before
 installing anything heavy; its Docker images install every curated package and
 fail to build if modules and events do not fit together. Both install
 `huri-core` from the ref in `HURI_CORE_REF` — or, for a developer working on

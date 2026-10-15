@@ -74,7 +74,7 @@ the server checks, per session, that every one of them is produced.
 | ↳ [huri-module-tag](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-tag) | transcript stitching |
 | ↳ [huri-module-emo](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-emo) | speech emotion, and its aggregator |
 | ↳ [huri-module-rag](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-rag) | answers from long-term memory (Qdrant + an LLM), and the question aggregator |
-| ↳ [huri-tts](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-tts), [huri-module-tts-piper](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-tts-piper), [huri-module-tts-cosyvoice](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-tts-cosyvoice) | text to speech: shared streaming logic, the default Piper engine, CosyVoice3 voice cloning |
+| ↳ [huri-module-tts](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-tts) | text to speech: the default Piper engine (`tts`, extra `piper`) and CosyVoice3 voice cloning (`tts_cosyvoice`, extra `cosyvoice`) |
 | ↳ [huri-module-mov](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-mov) | co-speech gestures (EMAGE) |
 | ↳ [huri-hub](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-hub) | `huri hub search` / `list` / `install`: finds verified and community modules (a `huri` command plugin) |
 | ↳ [huri-cli](https://github.com/Lucy-Robotics/huri-modules/tree/main/examples/cli) | the reference command-line client |
