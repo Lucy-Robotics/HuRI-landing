@@ -10,7 +10,7 @@ epic ([huri-core#93](https://github.com/Lucy-Robotics/huri-core/issues/93)).
 | [huri-core](https://github.com/Lucy-Robotics/huri-core) | the abstract framework: base classes, bus, server, plugin loader, checks, client SDK, `huri hub`, `huri_core.testing` | nothing of HuRI's |
 | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | `packages/huri-events`, the curated `packages/huri-module-*` (+ `huri-tts`), `registry.toml`, `modules/<name>` submodules for verified third-party modules, install and deploy, the reference client in `examples/cli` | `huri-core`, at the ref in its `HURI_CORE_REF` file |
 | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | a starter module package, with its tests and CI | `huri-core` + `huri-events` |
-| [HuRI](https://github.com/Lucy-Robotics/HuRI) | these pages | nothing |
+| [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | these pages | nothing |
 
 `huri-core` is complete and fully tested without any module or curated event:
 its tests define their own toy events and modules. The curated vocabulary,

@@ -10,7 +10,11 @@ modules of their session.
 Everything is a plugin: any pip-installable package can add a module or an
 event type, without touching the framework.
 
-This repository holds no code: it is the front page of the HuRI projects.
+This repository, `HuRI-landing`, holds no code: it is the front page of the
+HuRI projects. The framework's repository was called `Lucy-Robotics/HuRI`
+before the split; it is now
+[huri-core](https://github.com/Lucy-Robotics/huri-core), and GitHub redirects
+the old URL there.
 
 ## The pipeline
 
@@ -74,7 +78,7 @@ the server checks, per session, that every one of them is produced.
 | ↳ [huri-module-mov](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-mov) | co-speech gestures (EMAGE) |
 | ↳ [huri-cli](https://github.com/Lucy-Robotics/huri-modules/tree/main/examples/cli) | the reference command-line client |
 | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | starter for a new module (a GitHub template repository) |
-| [HuRI](https://github.com/Lucy-Robotics/HuRI) | this page: what HuRI is, how the pieces fit, where to contribute |
+| [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | this page: what HuRI is, how the pieces fit, where to contribute |
 
 Each piece installs straight from git, at a tag or a branch (`<ref>`):
 
