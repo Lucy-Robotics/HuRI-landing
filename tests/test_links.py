@@ -40,8 +40,12 @@ def test_known_repositories_pass(tmp_path):
         "[stt](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/x)\n"
         "[tpl](https://github.com/Lucy-Robotics/huri-plugin-template#readme)\n"
         "[home](https://github.com/Lucy-Robotics/HuRI-landing)\n"
+        "[cli](https://github.com/Lucy-Robotics/huri-cli/issues)\n"
+        "[demo](https://github.com/Lucy-Robotics/HuRI_website_demo)\n"
+        "[atp](https://github.com/lucy-robotics/huri_atp_testsite)\n"
         "```sh\n"
         "pip install git+https://github.com/Lucy-Robotics/huri-core.git@dev\n"
+        "pip install git+https://github.com/Lucy-Robotics/huri-cli.git@0.1.0\n"
         "```\n"
     )
     assert check_links.check_file(page, external=False) == []
@@ -51,14 +55,16 @@ def test_unknown_repository_is_reported(tmp_path):
     page = tmp_path / "page.md"
     page.write_text(
         "[old](https://github.com/Lucy-Robotics/huri-events)\n"
+        "[sic](https://github.com/Lucy-Robotics/HuRI-website-demo)\n"
         "```sh\n"
         "pip install git+https://github.com/Lucy-Robotics/huri-server.git@0.4.0\n"
         "```\n"
     )
     problems = check_links.check_file(page, external=False)
-    assert len(problems) == 2
+    assert len(problems) == 3
     assert "unknown repository Lucy-Robotics/huri-events" in problems[0]
-    assert "unknown repository Lucy-Robotics/huri-server (" in problems[1]
+    assert "unknown repository Lucy-Robotics/HuRI-website-demo" in problems[1]
+    assert "unknown repository Lucy-Robotics/huri-server (" in problems[2]
 
 
 def test_installing_from_the_showcase_is_reported(tmp_path):
@@ -152,6 +158,7 @@ def _siblings(root):
     (modules / "README.md").write_text("# huri-modules\n## Install\n")
     (root / "huri-core").mkdir()
     (root / "huri-core" / "README.md").write_text("# huri-core\n## Client SDK\n")
+    (root / "huri-cli" / "huri-meta").mkdir(parents=True)
     return root
 
 
@@ -165,6 +172,8 @@ def test_deep_links_resolve_against_sibling_checkouts(tmp_path):
         f"[ok]({GH}/huri-modules/blob/main/README.md#install)\n"
         f"[ok]({GH}/huri-core/issues/93)\n"
         f"[ok]({GH}/huri-core#readme)\n"
+        f"[ok]({GH}/huri-cli/tree/main/huri-meta)\n"
+        f"[gone]({GH}/huri-cli/tree/main/examples/cli)\n"
         f"[typo]({GH}/huri-modules/tree/main/packages/huri-module-sst)\n"
         f"[anchor]({GH}/huri-core#client-sdj)\n"
         "```sh\n"
@@ -178,9 +187,10 @@ def test_deep_links_resolve_against_sibling_checkouts(tmp_path):
     # Without the sibling checkouts only repository names are checked.
     assert check_links.check_file(page, external=False) == []
     problems = check_links.check_file(page, external=False, siblings=siblings)
-    assert len(problems) == 4
-    assert "has no packages/huri-module-sst" in problems[0]
-    assert "no heading #client-sdj" in problems[1]
-    assert "has no packages/huri-evnts" in problems[2]
-    assert "huri-plugin-template is not checked out" in problems[3]
+    assert len(problems) == 5
+    assert "has no examples/cli" in problems[0]
+    assert "has no packages/huri-module-sst" in problems[1]
+    assert "no heading #client-sdj" in problems[2]
+    assert "has no packages/huri-evnts" in problems[3]
+    assert "huri-plugin-template is not checked out" in problems[4]
     assert check_links.main(["--siblings", str(siblings), str(page)]) == 1

@@ -9,7 +9,8 @@ Lucy-Robotics organization, anywhere in a page (code blocks included, so the
 install strings are checked too), must name one of the HuRI repositories;
 `Lucy-Robotics/HuRI` is the old name of huri-core (GitHub redirects it, but a
 page must not rely on that), and nothing installs from `HuRI-landing`, which
-holds no code.
+holds no code. The known repositories are HuRI's own and the use cases built
+on it (huri-cli, the demo website, the acceptance test site).
 
 With --siblings DIR (or HURI_SPLIT_DIR), a deep link into a known repository
 (`<repo>/tree|blob/<ref>/<path>`, `<repo>#anchor`, a pip string's
@@ -34,7 +35,16 @@ PAGES = ["README.md", "ARCHITECTURE.md", "CONTRIBUTING.md"]
 ORG = "Lucy-Robotics"
 # Spelled as on GitHub (which compares names case-insensitively).
 SHOWCASE = "HuRI-landing"  # these pages; holds no code
-REPOS = {"huri-core", "huri-modules", "huri-plugin-template", SHOWCASE}
+REPOS = {
+    "huri-core",
+    "huri-modules",
+    "huri-plugin-template",
+    SHOWCASE,
+    # Use cases: clients built on HuRI, each in its own repository.
+    "huri-cli",
+    "HuRI_website_demo",
+    "HuRI_ATP_testsite",
+}
 # Lucy-Robotics/HuRI was renamed to huri-core; the name is never reused.
 OLD_NAMES = {"huri": "huri-core"}
 _CANONICAL = {name.lower(): name for name in REPOS}
@@ -129,7 +139,7 @@ def check_org_urls(path: Path, siblings: Optional[Path] = None) -> List[str]:
         elif (pip or ref) and repo == SHOWCASE:
             problems.append(
                 f"{where} -> {ORG}/{SHOWCASE} holds no code; "
-                "install from huri-core or huri-modules"
+                "install from huri-core, huri-modules or huri-cli"
             )
         elif siblings is not None:
             problems += check_sibling(where, siblings, repo, url_path, fragment)

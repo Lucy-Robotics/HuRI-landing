@@ -21,11 +21,11 @@ jobs:
       - run: pytest -q
 
   deep-links:
-    # The pages link into huri-core and huri-modules at `main` (packages,
-    # deploy/, registry.toml, RELEASING.md, #anchors): check each such path
-    # against a shallow checkout of their `main`. Non-blocking until both
-    # repositories exist under their new names and `main` holds the split
-    # layout (the split cutover; see CONTRIBUTING.md).
+    # The pages link into huri-core, huri-modules and huri-cli at `main`
+    # (packages, deploy/, registry.toml, RELEASING.md, huri-meta/, #anchors):
+    # check each such path against a shallow checkout of their `main`.
+    # Non-blocking until these repositories exist under their names and
+    # `main` holds the split layout (the split cutover; see CONTRIBUTING.md).
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -42,6 +42,11 @@ jobs:
           repository: Lucy-Robotics/huri-modules
           ref: main
           path: huri-modules
+      - uses: actions/checkout@v4
+        with:
+          repository: Lucy-Robotics/huri-cli
+          ref: main
+          path: huri-cli
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

@@ -1,7 +1,7 @@
 # Contributing to HuRI
 
-HuRI is four repositories; pick the line that matches what you want to change,
-and open the issue or pull request there.
+HuRI is four repositories, plus the use cases built on it; pick the line that
+matches what you want to change, and open the issue or pull request there.
 
 | You want to… | Repository | How |
 |---|---|---|
@@ -9,14 +9,15 @@ and open the issue or pull request there.
 | Add an event type | an events package of your own, in your own topic namespace (`acme.*`) | see the template's `events/`; `huri.*` is reserved for [huri-events](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-events) |
 | Fix or improve a curated module, or `huri-events` | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) ([issues](https://github.com/Lucy-Robotics/huri-modules/issues)) | pull request on `dev` to that package under `packages/`, with tests (`huri_core.testing`); bump the package's version |
 | Change the hub (`huri hub`), the registry's format or its checker | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) ([issues](https://github.com/Lucy-Robotics/huri-modules/issues)) | pull request on `dev` to `packages/huri-hub` (the registry parser lives there; `check_registry.py` reuses it), with tests; bump the package's version |
-| Change install or deployment, or the reference client | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | pull request on `dev`; CI plans the installer on three distros (`ci.yml`); a change to `deploy/` or `packages/` also builds the base image and runs a session against it (`docker.yml`); the GPU images and a real install run on demand (`docker.yml`'s `gpu_images`, `install.yml`) |
+| Change install or deployment | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | pull request on `dev`; CI plans the installer on three distros (`ci.yml`); a change to `deploy/` or `packages/` also builds the base image and runs a session against it (`docker.yml`); the GPU images and a real install run on demand (`docker.yml`'s `gpu_images`, `install.yml`) |
 | Change the framework (bus, server, SDK, loader, the `huri` command dispatcher) | [huri-core](https://github.com/Lucy-Robotics/huri-core) ([issues](https://github.com/Lucy-Robotics/huri-core/issues)) | pull request on `dev`; mind the public surface and semver ([RELEASING.md](https://github.com/Lucy-Robotics/huri-core/blob/main/RELEASING.md)) |
+| Fix or improve the reference client (`huri-cli`), its example configs or the `huri` metapackage | [huri-cli](https://github.com/Lucy-Robotics/huri-cli) ([issues](https://github.com/Lucy-Robotics/huri-cli/issues)) | pull request on `dev`, with tests; CI runs pytest and lint on Python 3.10–3.12 against `huri-core` and `huri-modules` `dev` |
 | Improve the module starter | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | pull request on `main` |
 | Improve these pages | [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | pull request on `main`; CI runs `python check_links.py` and `pytest` |
 
-These pages link into `huri-core` and `huri-modules` at `main`, so they rely
-on the split cutover: `huri-core`'s `dev` (the split layout) merged into `main`
-right after the rename, and `huri-modules` created with the split commit on both
+These pages link into `huri-core`, `huri-modules` and `huri-cli` at `main`, so
+they rely on the split cutover: `huri-core`'s `dev` (the split layout) merged
+into `main` right after the rename, and `huri-modules` created with the split commit on both
 `dev` and `main`. `python check_links.py --siblings DIR` resolves each such
 link against checkouts in `DIR/<repo>`; CI's `deep-links` job does it against
 their `main`.
@@ -32,18 +33,19 @@ already clean.
 
 ## Versioning, in short
 
-- `huri-core` and `huri-modules` each follow semver, with tags `X.Y.Z` (no
-  `v`) on `main` and work on `dev`. While `0.x`, a minor bump may break the
-  public surface; a patch must not.
+- `huri-core`, `huri-modules` and `huri-cli` each follow semver, with tags
+  `X.Y.Z` (no `v`) on `main` and work on `dev`. While `0.x`, a minor bump may
+  break the public surface; a patch must not.
 - A change to `huri-core`'s public surface is a minor bump; `huri-modules`
   sees it first in its non-blocking canary CI (against `huri-core` `dev`), then
-  adopts it by bumping `HURI_CORE_REF` in a pull request.
+  adopts it by bumping `HURI_CORE_REF` in `versions.env` in a pull request.
 - In `huri-modules`, each package has its own version in its `pyproject.toml`:
   bump it when the package changes. A wire-format change to `huri-events` is a
   minor bump while `0.x`.
 - Working on `huri-core` and `huri-modules` together: set
   `HURI_CORE_PATH=/path/to/huri-core` and `huri-modules` installs that checkout
-  (editable) instead of `HURI_CORE_REF`.
+  (editable) instead of `HURI_CORE_REF`; likewise `HURI_CLI_PATH` for a
+  `huri-cli` checkout instead of `HURI_CLI_REF`.
 
 Details: [huri-core's RELEASING.md](https://github.com/Lucy-Robotics/huri-core/blob/main/RELEASING.md),
 [huri-modules' RELEASING.md](https://github.com/Lucy-Robotics/huri-modules/blob/main/RELEASING.md),

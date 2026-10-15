@@ -56,10 +56,10 @@ the server checks, per session, that every one of them is produced.
 
 | You want to… | Go to | You need |
 |---|---|---|
-| **Try it** — a working pipeline, fast | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) — `install.sh` on this machine | that repository only |
+| **Try it** — a working pipeline, fast | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) — `install.sh` on this machine; it also installs [huri-cli](https://github.com/Lucy-Robotics/huri-cli) to talk to it (`--no-cli` to skip) | that repository only |
 | **Deploy** — run a chosen set of modules somewhere | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) — `install.sh` (bare metal), [deploy/](https://github.com/Lucy-Robotics/huri-modules/tree/main/deploy) (Docker) or [helm/](https://github.com/Lucy-Robotics/huri-modules/tree/main/helm) (Kubernetes) | that repository only |
 | **Build a module** — write or change one module, alone | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) ("Use this template") | `huri-core` + `huri-events`; no GPU, no running pipeline |
-| **Write a client** — a website, a robot, a CLI | the [huri-core client SDK](https://github.com/Lucy-Robotics/huri-core#client-sdk) and [huri-cli](https://github.com/Lucy-Robotics/huri-modules/tree/main/examples/cli), the reference client | `huri-core[client]` + [huri-events](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-events) |
+| **Write a client** — a website, a robot, a CLI | the [huri-core client SDK](https://github.com/Lucy-Robotics/huri-core#client-sdk) and [huri-events](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-events); [huri-cli](https://github.com/Lucy-Robotics/huri-cli) is the reference example to start from | `huri-core[client]` + `huri-events`; your client is its own repository, with its own versions |
 | **Understand the framework** — bus, server, plugins, checks | [huri-core](https://github.com/Lucy-Robotics/huri-core), and [ARCHITECTURE.md](ARCHITECTURE.md) here | nothing |
 
 ## The pieces
@@ -77,8 +77,8 @@ the server checks, per session, that every one of them is produced.
 | ↳ [huri-module-tts](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-tts) | text to speech: the default Piper engine (`tts`, extra `piper`) and CosyVoice3 voice cloning (`tts_cosyvoice`, extra `cosyvoice`) |
 | ↳ [huri-module-mov](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-mov) | co-speech gestures (EMAGE) |
 | ↳ [huri-hub](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-hub) | `huri hub search` / `list` / `install`: finds verified and community modules (a `huri` command plugin) |
-| ↳ [huri-cli](https://github.com/Lucy-Robotics/huri-modules/tree/main/examples/cli) | the reference command-line client |
 | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | starter for a new module (a GitHub template repository) |
+| [huri-cli](https://github.com/Lucy-Robotics/huri-cli) | the reference command-line client, a use case of the client SDK (not part of the framework or of the curated set); also the source of `huri`, a convenience metapackage (`huri-core[client]` + `huri-cli`) |
 | [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | this page: what HuRI is, how the pieces fit, where to contribute |
 
 Each piece installs straight from git, at a tag or a branch (`<ref>`):
@@ -87,16 +87,31 @@ Each piece installs straight from git, at a tag or a branch (`<ref>`):
 pip install "huri-core[server] @ git+https://github.com/Lucy-Robotics/huri-core.git@<ref>"   # or [client], [dev]
 pip install "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-events"
 pip install "git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-module-stt"
-pip install "git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=examples/cli"
+pip install "huri-cli @ git+https://github.com/Lucy-Robotics/huri-cli.git@<ref>"   # then: huri-cli --config ...
 pip install "huri-hub @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-hub"   # then: huri hub ...
 ```
+
+## Built with HuRI
+
+Use cases: clients built on the SDK, each in its own repository, with its own
+versions, depending on `huri-core[client]` and an event package — not part of
+HuRI itself.
+
+| Use case | What it is |
+|---|---|
+| [huri-cli](https://github.com/Lucy-Robotics/huri-cli) | the reference client: microphone and prompt in, text, voice and a gesture view out |
+| [HuRI_website_demo](https://github.com/Lucy-Robotics/HuRI_website_demo) | a demo website: a 3D talking character |
+| [HuRI_ATP_testsite](https://github.com/Lucy-Robotics/HuRI_ATP_testsite) | the acceptance test site |
+| InMoov integration (planned) | HuRI driving an InMoov robot |
 
 ## Versions
 
 `huri-core` and `huri-modules` are versioned separately: semver, tags `X.Y.Z`
 (no `v`), work on `dev`, releases on `main`. A `huri-modules` release is a
 tested set — every curated package together with the one `huri-core` ref they
-were built and tested against, written in its `HURI_CORE_REF` file.
+were built and tested against, `HURI_CORE_REF` in its `versions.env` (next to
+`HURI_CLI_REF`, the `huri-cli` ref its installer installs). `huri-cli` has its
+own versions too, same scheme, and pins a `huri-core[client]` range.
 
 | huri-modules | huri-core |
 |---|---|

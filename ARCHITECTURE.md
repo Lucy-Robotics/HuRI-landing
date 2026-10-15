@@ -8,9 +8,18 @@ epic ([huri-core#93](https://github.com/Lucy-Robotics/huri-core/issues/93)).
 | Repository | Holds | Depends on |
 |---|---|---|
 | [huri-core](https://github.com/Lucy-Robotics/huri-core) | the abstract framework: base classes, bus, server, plugin loader, checks, client SDK, `huri_core.testing`, and the `huri` command, which only dispatches to installed command plugins | nothing of HuRI's |
-| [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | `packages/huri-events`, the curated `packages/huri-module-*`, `registry.toml` with its checker and `packages/huri-hub` (`huri hub`), `modules/<name>` submodules for verified third-party modules, install and deploy, the reference client in `examples/cli` | `huri-core`, at the ref in its `HURI_CORE_REF` file |
+| [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | `packages/huri-events`, the curated `packages/huri-module-*`, `registry.toml` with its checker and `packages/huri-hub` (`huri hub`), `modules/<name>` submodules for verified third-party modules, install and deploy (whose installer also installs `huri-cli`) | `huri-core`, at `HURI_CORE_REF` in its `versions.env` file |
 | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | a starter module package, with its tests and CI | `huri-core` + `huri-events` |
+| [huri-cli](https://github.com/Lucy-Robotics/huri-cli) | a use case: the reference command-line client, its example client configs (with their `cli:` device section), and `huri-meta/`, the source of the `huri` convenience metapackage | `huri-core[client]` + `huri-events`, by version range |
 | [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | these pages | nothing |
+
+Use cases — huri-cli, [HuRI_website_demo](https://github.com/Lucy-Robotics/HuRI_website_demo),
+[HuRI_ATP_testsite](https://github.com/Lucy-Robotics/HuRI_ATP_testsite), a
+future InMoov integration — are not part of HuRI: each lives in its own
+repository, with its own versions and CI, and uses HuRI only through the client
+SDK and an event package. `huri-cli` is the reference one; `huri-modules`'
+installer installs it (at `HURI_CLI_REF`) so that a fresh install can be talked
+to, and its Docker images do not.
 
 `huri-core` is complete and fully tested without any module or curated event:
 its tests define their own toy events and modules. The curated vocabulary,
@@ -20,7 +29,7 @@ changes with them.
 ## Layers
 
 ```
-use cases       huri-cli, a website backend, a robot ...   ── client SDK ──┐
+use cases       huri-cli, the demo website, a robot ...    ── client SDK ──┐
                                                                             │ websocket
 huri-core       Module / EventData base classes, bus, server,             ◄┘
                 plugin loader, compatibility checks, client SDK, testing
@@ -166,8 +175,10 @@ modules keeps each one's heavy dependencies apart: an extra per module
 planned. The `huri-modules` installer merges them for the planned modules and stops on conflicting pins before
 installing anything heavy; its Docker images install every curated package and
 fail to build if modules and events do not fit together. Both install
-`huri-core` from the ref in `HURI_CORE_REF` — or, for a developer working on
-both repositories, from a local checkout named by `HURI_CORE_PATH`.
+`huri-core` from `HURI_CORE_REF` in `versions.env` — or, for a developer working
+on both repositories, from a local checkout named by `HURI_CORE_PATH`. The
+installer (not the images) also installs `huri-cli` from `HURI_CLI_REF`, or
+`HURI_CLI_PATH`; `--no-cli` skips it.
 
 ## Versions, and how a core change propagates
 
@@ -177,10 +188,15 @@ both repositories, from a local checkout named by `HURI_CORE_PATH`.
   point groups and manifest); a patch must not.
 - **huri-modules**: its own semver and tags, same branches. A release is a
   tested set: every package (each with its own version in its
-  `pyproject.toml`) and the one `huri-core` ref in `HURI_CORE_REF`. Packages
+  `pyproject.toml`) and the one `huri-core` ref, `HURI_CORE_REF` in
+  `versions.env` (with `HURI_CLI_REF`, the `huri-cli` it installs). Packages
   pin `huri-core` to one minor range (`>=0.4,<0.5` from
   `huri-core` 0.4.0 on); a wire-format change in
   `huri-events` is a minor bump while `0.x`.
+- **huri-cli**: its own semver and tags, same scheme and branches; pins
+  `huri-core[client]` and `huri-events` by range, and its CI runs against
+  `huri-core` and `huri-modules` at `HURI_CORE_REF` and `HURI_MODULES_REF`
+  (default `dev`).
 - **huri-plugin-template**: `main` only; its CI installs `huri-core` and
   `huri-events` from `HURI_CORE_REF` and `HURI_MODULES_REF`.
 
@@ -194,9 +210,9 @@ A change to the core reaches the modules in four steps, none of them silent:
 2. `huri-modules` CI runs every package against the pinned `HURI_CORE_REF`
    (blocking) and against `huri-core` `dev` (a non-blocking canary): a breaking
    core change shows up there before it is released.
-3. A `huri-modules` pull request bumps `HURI_CORE_REF` to the new tag (and the
-   packages' `huri-core` range on a minor bump), with whatever fixes the
-   modules need.
+3. A `huri-modules` pull request bumps `HURI_CORE_REF` in `versions.env` to
+   the new tag (and the packages' `huri-core` range on a minor bump), with
+   whatever fixes the modules need.
 4. `huri-modules` releases: a new tested set, and a new row in the table above.
 
 Details: [huri-core's RELEASING.md](https://github.com/Lucy-Robotics/huri-core/blob/main/RELEASING.md),
