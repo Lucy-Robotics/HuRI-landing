@@ -66,7 +66,7 @@ the server checks, per session, that every one of them is produced.
 
 | Repository | What it is |
 |---|---|
-| [huri-core](https://github.com/Lucy-Robotics/huri-core) | the framework: module and event base classes, bus, server, plugin loader, compatibility checks, client SDK, `huri hub`, `huri_core.testing`; no concrete module or event, and fully testable without any |
+| [huri-core](https://github.com/Lucy-Robotics/huri-core) | the framework: module and event base classes, bus, server, plugin loader, compatibility checks, client SDK, `huri_core.testing`, the `huri` command (whose subcommands are plugins); no concrete module or event, and fully testable without any |
 | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | the curated set, released and tested together: the registry of verified modules, install and deploy (`install.sh`, Docker, Helm), and the packages below |
 | ↳ [huri-events](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-events) | the curated event vocabulary, one class per `huri.*` topic |
 | ↳ [huri-module-vad](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-vad) | voice activity detection (WebRTC) |
@@ -76,6 +76,7 @@ the server checks, per session, that every one of them is produced.
 | ↳ [huri-module-rag](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-rag) | answers from long-term memory (Qdrant + an LLM), and the question aggregator |
 | ↳ [huri-tts](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-tts), [huri-module-tts-piper](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-tts-piper), [huri-module-tts-cosyvoice](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-tts-cosyvoice) | text to speech: shared streaming logic, the default Piper engine, CosyVoice3 voice cloning |
 | ↳ [huri-module-mov](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-module-mov) | co-speech gestures (EMAGE) |
+| ↳ [huri-hub](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-hub) | `huri hub search` / `list` / `install`: finds verified and community modules (a `huri` command plugin) |
 | ↳ [huri-cli](https://github.com/Lucy-Robotics/huri-modules/tree/main/examples/cli) | the reference command-line client |
 | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | starter for a new module (a GitHub template repository) |
 | [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | this page: what HuRI is, how the pieces fit, where to contribute |
@@ -87,6 +88,7 @@ pip install "huri-core[server] @ git+https://github.com/Lucy-Robotics/huri-core.
 pip install "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-events"
 pip install "git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-module-stt"
 pip install "git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=examples/cli"
+pip install "huri-hub @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-hub"   # then: huri hub ...
 ```
 
 ## Versions

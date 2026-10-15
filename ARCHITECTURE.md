@@ -7,8 +7,8 @@ epic ([huri-core#93](https://github.com/Lucy-Robotics/huri-core/issues/93)).
 
 | Repository | Holds | Depends on |
 |---|---|---|
-| [huri-core](https://github.com/Lucy-Robotics/huri-core) | the abstract framework: base classes, bus, server, plugin loader, checks, client SDK, `huri hub`, `huri_core.testing` | nothing of HuRI's |
-| [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | `packages/huri-events`, the curated `packages/huri-module-*` (+ `huri-tts`), `registry.toml`, `modules/<name>` submodules for verified third-party modules, install and deploy, the reference client in `examples/cli` | `huri-core`, at the ref in its `HURI_CORE_REF` file |
+| [huri-core](https://github.com/Lucy-Robotics/huri-core) | the abstract framework: base classes, bus, server, plugin loader, checks, client SDK, `huri_core.testing`, and the `huri` command, which only dispatches to installed command plugins | nothing of HuRI's |
+| [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | `packages/huri-events`, the curated `packages/huri-module-*` (+ `huri-tts`), `registry.toml` with its checker and `packages/huri-hub` (`huri hub`), `modules/<name>` submodules for verified third-party modules, install and deploy, the reference client in `examples/cli` | `huri-core`, at the ref in its `HURI_CORE_REF` file |
 | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | a starter module package, with its tests and CI | `huri-core` + `huri-events` |
 | [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | these pages | nothing |
 
@@ -24,9 +24,10 @@ use cases       huri-cli, a website backend, a robot ...   ── client SDK ─
                                                                             │ websocket
 huri-core       Module / EventData base classes, bus, server,             ◄┘
                 plugin loader, compatibility checks, client SDK, testing
-                  ▲ entry points ("huri.modules", "huri.events")
+                  ▲ entry points ("huri.modules", "huri.events", "huri.commands")
 event packages  huri-events (huri.*), third-party (acme.*)
 module packages huri-module-stt, huri-module-rag, ... , third-party modules
+commands        huri-hub (`huri hub`)
 ```
 
 Dependencies point one way, with no cycle:
@@ -35,6 +36,7 @@ Dependencies point one way, with no cycle:
 use case    ──► huri-core[client] + huri-events (or another event package)
 module      ──► huri-core[server] + huri-events (or another event package)
 huri-events ──► huri-core
+huri-hub    ──► huri-core
 ```
 
 `huri-core` knows no concrete module or event: it moves bytes and JSON and calls
@@ -68,6 +70,17 @@ its own, which no other package may use. A replacement for a curated event
 (`acme.motion`) lives next to it instead of overriding it, and a module's
 topics are part of what it is: a module consuming `acme.motion` is a different
 module, wired instead of the old one.
+
+**Commands are plugins too.** `huri-core` installs the `huri` console script,
+which knows no command of its own: `huri <name> [args...]` runs the entry point
+`<name>` of the `"huri.commands"` group, and `huri --help` lists the installed
+ones. `huri hub` is such a plugin, from the `huri-hub` package of
+`huri-modules`:
+
+```toml
+[project.entry-points."huri.commands"]
+hub = "huri_hub.cli:main"
+```
 
 ## Checks before anything runs
 
@@ -122,10 +135,22 @@ A tier-3 entry's `source` says where its reviewed code is:
   submodule under `modules/<name>` must be checked out at that tag, so what CI
   tests is what users install.
 
-`huri hub` (in `huri-core`) reads that registry from `huri-modules` at the ref
-in `HURI_MODULES_REF` (default `main`, the latest release) and installs curated
-modules from the same repository and ref. `--registry PATH|URL`, `HURI_REGISTRY`
-or a local `huri-modules` checkout point it elsewhere.
+`huri hub` comes from
+[`huri-hub`](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-hub),
+a package of `huri-modules`, so the registry, the parser that reads it, its CI
+checker (`check_registry.py`, which reuses that parser) and the hub are released
+together: a new registry key needs no `huri-core` release. Install it next to `huri-core`, then run `huri hub`
+(or `huri-hub`, the same command):
+
+```
+pip install "huri-hub @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-hub"
+huri hub search tts
+```
+
+It reads the registry from `huri-modules` at the ref in `HURI_MODULES_REF`
+(default `main`, the latest release) and installs curated modules from the same
+repository and ref. `--registry PATH|URL`, `HURI_REGISTRY` or a local
+`huri-modules` checkout point it elsewhere.
 
 A module is tested alone with `huri_core.testing` (`ModuleHarness`, and
 `LocalHandle` standing in for a deployment); `huri-modules` runs the whole
