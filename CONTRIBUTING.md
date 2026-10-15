@@ -8,17 +8,26 @@ and open the issue or pull request there.
 | Add a module (a new capability) | your own, created from [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | nobody's permission needed: publish it, tag it `huri-module` to be found by `huri hub`; for the verified mark, open a pull request to [huri-modules](https://github.com/Lucy-Robotics/huri-modules) adding it to `registry.toml` and pinning it as a submodule under `modules/<name>` ([ACCEPTANCE.md](https://github.com/Lucy-Robotics/huri-modules/blob/main/ACCEPTANCE.md)) |
 | Add an event type | an events package of your own, in your own topic namespace (`acme.*`) | see the template's `events/`; `huri.*` is reserved for [huri-events](https://github.com/Lucy-Robotics/huri-modules/tree/main/packages/huri-events) |
 | Fix or improve a curated module, or `huri-events` | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) ([issues](https://github.com/Lucy-Robotics/huri-modules/issues)) | pull request on `dev` to that package under `packages/`, with tests (`huri_core.testing`); bump the package's version |
-| Change install or deployment, or the reference client | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | pull request on `dev`; CI builds the images and runs a session against them |
+| Change install or deployment, or the reference client | [huri-modules](https://github.com/Lucy-Robotics/huri-modules) | pull request on `dev`; CI plans the installer on three distros (`ci.yml`); a change to `deploy/` or `packages/` also builds the base image and runs a session against it (`docker.yml`); the GPU images and a real install run on demand (`docker.yml`'s `gpu_images`, `install.yml`) |
 | Change the framework (bus, server, SDK, loader, `huri hub`) | [huri-core](https://github.com/Lucy-Robotics/huri-core) ([issues](https://github.com/Lucy-Robotics/huri-core/issues)) | pull request on `dev`; mind the public surface and semver ([RELEASING.md](https://github.com/Lucy-Robotics/huri-core/blob/main/RELEASING.md)) |
 | Improve the module starter | [huri-plugin-template](https://github.com/Lucy-Robotics/huri-plugin-template) | pull request on `main` |
-| Improve these pages | [HuRI](https://github.com/Lucy-Robotics/HuRI) | pull request on `main`; CI runs `python check_links.py` and `pytest` |
+| Improve these pages | [HuRI-landing](https://github.com/Lucy-Robotics/HuRI-landing) | pull request on `main`; CI runs `python check_links.py` and `pytest` |
+
+These pages link into `huri-core` and `huri-modules` at `main`, so they rely
+on the split cutover: `huri-core`'s `dev` (the split layout) merged into `main`
+right after the rename, and `huri-modules` created with the split commit on both
+`dev` and `main`. `python check_links.py --siblings DIR` resolves each such
+link against checkouts in `DIR/<repo>`; CI's `deep-links` job does it against
+their `main`.
 
 Not sure where something belongs? Open an issue on
 [huri-core](https://github.com/Lucy-Robotics/huri-core/issues) and it will be
 moved.
 
-`huri-core` and `huri-modules` run `make check` (black, isort, flake8, mypy,
-pytest) in CI; run it locally first.
+In `huri-core` and `huri-modules`, run `make check` locally first. CI runs the
+same lint (black, isort, flake8, mypy) and pytest as separate steps, not
+`make check` itself; in `huri-modules`, mypy gates only the files that are
+already clean.
 
 ## Versioning, in short
 
