@@ -19,3 +19,30 @@ jobs:
       # repositories, relative links against this checkout.
       - run: python check_links.py
       - run: pytest -q
+
+  deep-links:
+    # The pages link into huri-core and huri-modules at `main` (packages,
+    # deploy/, registry.toml, RELEASING.md, #anchors): check each such path
+    # against a shallow checkout of their `main`. Non-blocking until both
+    # repositories exist under their new names and `main` holds the split
+    # layout (the split cutover; see CONTRIBUTING.md).
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: HuRI-landing
+      - uses: actions/checkout@v4
+        with:
+          repository: Lucy-Robotics/huri-core
+          ref: main
+          path: huri-core
+      - uses: actions/checkout@v4
+        with:
+          repository: Lucy-Robotics/huri-modules
+          ref: main
+          path: huri-modules
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python HuRI-landing/check_links.py --siblings .
