@@ -1,0 +1,21 @@
+name: links
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pytest
+      # No network: links into Lucy-Robotics are checked against the known
+      # repositories, relative links against this checkout.
+      - run: python check_links.py
+      - run: pytest -q
