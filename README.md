@@ -87,15 +87,27 @@ Each piece installs straight from git, at a tag or a branch (`<ref>`):
 pip install "huri-core[server] @ git+https://github.com/Lucy-Robotics/huri-core.git@<ref>"   # or [client], [dev]
 pip install "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-events"
 pip install "git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-module-stt"
-pip install "huri-cli @ git+https://github.com/Lucy-Robotics/huri-cli.git@<ref>"   # then: huri-cli --config ...
 pip install "huri-hub @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-hub"   # then: huri hub ...
+```
+
+`huri-core` and `huri-events` are on no package index, so a client installs
+them in the same command as itself, as git URLs (here `huri-cli`, at
+compatible refs; see the table under [Versions](#versions)):
+
+```sh
+pip install \
+  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@<ref>" \
+  "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<ref>#subdirectory=packages/huri-events" \
+  "huri-cli @ git+https://github.com/Lucy-Robotics/huri-cli.git@<ref>"   # then: huri-cli --config ...
 ```
 
 ## Built with HuRI
 
-Use cases: clients built on the SDK, each in its own repository, with its own
-versions, depending on `huri-core[client]` and an event package — not part of
-HuRI itself.
+Use cases: clients built on HuRI, each in its own repository, with its own
+versions — not part of HuRI itself. The model is that a use case depends only
+on `huri-core[client]` and an event package; `huri-cli` already does. The demo
+website and the acceptance test site predate the split and still use the old
+monorepo's client code until they are ported to `huri-core[client]`.
 
 | Use case | What it is |
 |---|---|
@@ -113,9 +125,13 @@ were built and tested against, `HURI_CORE_REF` in its `versions.env` (next to
 `HURI_CLI_REF`, the `huri-cli` ref its installer installs). `huri-cli` has its
 own versions too, same scheme, and pins a `huri-core[client]` range.
 
-| huri-modules | huri-core |
-|---|---|
-| 0.1.x | 0.4.x |
+| huri-modules | huri-core | huri-cli (installed by huri-modules' installer) |
+|---|---|---|
+| 0.1.x | 0.4.x | 0.1.x |
+
+`huri-cli` 0.1.x needs `huri-core` 0.4.x and `huri-events` 0.1.x (from
+`huri-modules` 0.1.x): see huri-cli's
+[Versions and compatibility](https://github.com/Lucy-Robotics/huri-cli#versions-and-compatibility).
 
 How each repository releases: [huri-core's RELEASING.md](https://github.com/Lucy-Robotics/huri-core/blob/main/RELEASING.md)
 and [huri-modules' RELEASING.md](https://github.com/Lucy-Robotics/huri-modules/blob/main/RELEASING.md).

@@ -16,8 +16,9 @@ epic ([huri-core#93](https://github.com/Lucy-Robotics/huri-core/issues/93)).
 Use cases — huri-cli, [HuRI_website_demo](https://github.com/Lucy-Robotics/HuRI_website_demo),
 [HuRI_ATP_testsite](https://github.com/Lucy-Robotics/HuRI_ATP_testsite), a
 future InMoov integration — are not part of HuRI: each lives in its own
-repository, with its own versions and CI, and uses HuRI only through the client
-SDK and an event package. `huri-cli` is the reference one; `huri-modules`'
+repository, with its own versions and CI, and should use HuRI only through the
+client SDK and an event package (`huri-cli` does; the demo website and the test
+site still use the pre-split client code until they are ported). `huri-cli` is the reference one; `huri-modules`'
 installer installs it (at `HURI_CLI_REF`) so that a fresh install can be talked
 to, and its Docker images do not.
 
@@ -200,9 +201,13 @@ installer (not the images) also installs `huri-cli` from `HURI_CLI_REF`, or
 - **huri-plugin-template**: `main` only; its CI installs `huri-core` and
   `huri-events` from `HURI_CORE_REF` and `HURI_MODULES_REF`.
 
-| huri-modules | huri-core |
-|---|---|
-| 0.1.x | 0.4.x |
+| huri-modules | huri-core | huri-cli (installed by huri-modules' installer) |
+|---|---|---|
+| 0.1.x | 0.4.x | 0.1.x |
+
+`huri-cli` 0.1.x needs `huri-core` 0.4.x and `huri-events` 0.1.x (from
+`huri-modules` 0.1.x): see huri-cli's
+[Versions and compatibility](https://github.com/Lucy-Robotics/huri-cli#versions-and-compatibility).
 
 A change to the core reaches the modules in four steps, none of them silent:
 
