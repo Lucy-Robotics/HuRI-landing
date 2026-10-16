@@ -1,3 +1,9 @@
+> **Archived.** These pages moved into huri-core: the
+> [HuRI ecosystem](https://github.com/Lucy-Robotics/huri-core#huri-ecosystem),
+> [the architecture](https://github.com/Lucy-Robotics/huri-core/blob/main/docs/ARCHITECTURE.md)
+> and [contributing](https://github.com/Lucy-Robotics/huri-core/blob/main/CONTRIBUTING.md).
+> This repository is kept read-only so that old links still resolve.
+
 # HuRI
 
 **HuRI** is a realtime, modular conversational pipeline for robots and
